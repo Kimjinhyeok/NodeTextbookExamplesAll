@@ -3,7 +3,7 @@ const uuidv4 = require('uuid/v4');
 const { User, Domain } = require('../models');
 
 const router = express.Router();
-const URL = 'http://localhost:8002/v1';
+const URL = 'http://localhost:8002/v2';
 
 const request = async(req,api) => {
     try{
