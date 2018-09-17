@@ -43,4 +43,47 @@ router.get('/test', verifyToken, (req, res) => {
     res.json(req.decoded);
 })
 
+router.get('/posts/my', verifyToken, (req, res) => {
+    Post.findAll({ where : { userId : req.decoded.id }})
+        .then((posts) => {
+            console.log(posts);
+            res.json({
+                code : 200,
+                payload : posts
+            });
+        })
+        .catch((error) => {
+            console.error(error);
+            return res.status(500).json({
+                code : 500,
+                message : '서버에러'
+            });
+        });
+});
+
+router.get('/posts/hashtag/:title', verifyToken, async(req, res) => {
+    try{
+        const hashtag = await Hashtag.find({where : {title : req.params.title}});
+        if(!hashtag){
+            return res.status(404).json({
+                code : 404,
+                message : '검색 결과가 없습니다.'
+            });
+        }
+        const posts = await hashtag.getPost();
+        return res.json({
+            code : 200,
+            payload : posts
+        });
+    }catch(error){
+        console.error(error);
+        return res.status(500).json({
+            code : 500,
+            message : '서버 에러'
+        });
+    }
+});
+/*
+    자신이 올린 포스트와 해시태그를 검색하는 라우터 및 서비스를 작성함.
+*/
 module.exports = router;
